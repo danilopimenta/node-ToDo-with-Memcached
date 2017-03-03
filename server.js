@@ -2,6 +2,8 @@
 
 const Hapi = require('hapi');
 var Memcached = require('memcached');
+var path = require('path');
+const Inert = require('inert');
 
 const server = new Hapi.Server();
 server.connection({
@@ -10,7 +12,7 @@ server.connection({
 
 server.route({
     method: 'GET',
-    path:'/',
+    path:'/cache',
     handler: function (request, reply) {
 
       var memcached = new Memcached('memcached:11211');
@@ -24,6 +26,26 @@ server.route({
       return reply('hel world');
     }
 });
+
+server.register(Inert, () => {});
+
+server.route({
+    method: 'GET',
+    path:'/',
+    handler: {
+        file: 'index.html'
+    }
+});
+
+server.route({
+  method: 'GET',
+  path: '/js/{file*}',
+  handler: {
+    directory: {
+      path: 'js'
+    }
+  }
+})
 
 server.start((err) => {
 
