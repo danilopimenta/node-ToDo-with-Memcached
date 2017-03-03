@@ -1,0 +1,15 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+        - "80:80"
+    volumes:
+        - .:/usr/src
+    links:
+        - memcached
+
+  memcached:
+    image: "memcached:alpine"
+    ports:
+        - "11211:11211"
